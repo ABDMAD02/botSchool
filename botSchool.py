@@ -41,8 +41,8 @@ if __name__ == '__name__':
 
 
 
-username = 'irineaim@gmail.com'
-password = 'Idioma01@Idioma01@'
+username = 'username'
+password = 'password'
 
 
 grades = get_grades_selenium(username, password)
