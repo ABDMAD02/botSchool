@@ -17,7 +17,7 @@ def get_grades_selenium(username, password):
         driver.find_element(By.NAME, 'password').send_keys(password + Keys.RETURN)
         time.sleep(3)  # Ожидание загрузки страницы
         driver.get('https://skillset-schools.edupage.org/znamky/')
-        time.sleep(10)  # Ожидание загрузки страницы
+        time.sleep(10)
 
         with open(r'C:\Users\madi2\OneDrive\Рабочий стол\botSchool\source-page.html', 'w', errors='ignore') as file:
             file.write(driver.page_source)
@@ -27,13 +27,12 @@ def get_grades_selenium(username, password):
         driver.close()
         driver.quit()
 
-def get_classes(file_path):
-    with open(file_path) as file:
-        src = file.read()
-    soup = BeautifulSoup(src, 'lxml')
-    items_divs = soup.find_all('div', class='className')
+# def get_classes(file_path):
+#     with open(file_path) as file:
+#         src = file.read()
+#     soup = BeautifulSoup(src, 'lxml')
 
-    for item in items_divs
+
 def main():
     get_grades_selenium()
 
@@ -41,23 +40,9 @@ if __name__ == '__name__':
     main()
 
 
-    # Переход на страницу с оценками для конкретного класса
-    # grades_url = f'https://school.edupage.org/grades?class={class_number}'
-    # driver.get(grades_url)
-    #
-    # # Извлечение данных
-    # grades = []
-    # for grade_element in driver.find_elements(By.CLASS_NAME, 'grade'):
-    #     grades.append(grade_element.text)
-    #
-    # driver.quit()
-    # return grades
-
-
 
 username = 'irineaim@gmail.com'
 password = 'Idioma01@Idioma01@'
-# # class_number = 5
+
 
 grades = get_grades_selenium(username, password)
-# print(grades)
