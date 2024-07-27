@@ -5,6 +5,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 import time
+import pandas as pd
 from bs4 import BeautifulSoup
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -83,12 +84,16 @@ def get_grades_selenium(username, password, class_name):
 
         time.sleep(10)
 
-        grades = []
-        grade_elements = driver.find_elements(By.CLASS_NAME, 'znZnamka')
-        for grade_element in grade_elements:
-            grades.append(grade_element.text)
+        student_grades = {}
+        rows = driver.find_elements(By.XPATH, "//tr[contains(@class, 'row1') or contains(@class, 'row2')]")
+        for row in rows:
+            student_name = row.find_element(By.CLASS_NAME, 'edubarSmartLink').text
+            grades = row.find_elements(By.CLASS_NAME, 'znZnamka')
+            grades_text = [grade.text for grade in grades]
+            student_grades[student_name] = grades_text
 
-        return grades
+        return student_grades
+
 
     finally:
         driver.quit()
@@ -113,10 +118,10 @@ try:
     selected_class_name = classes[selected_class_index]
 
     if selected_class_name:
-        grades = get_grades_selenium(username, password, selected_class_name)
+        student_grades = get_grades_selenium(username, password, selected_class_name)
         print(f"Оценки для {selected_class_name}:")
-        for grade in grades:
-            print(grade)
+        for student, grades in student_grades.items():
+            print(f"{student}: {', '.join(grades)}")
 
         os.remove(r'C:\Users\madi2\OneDrive\Рабочий стол\botSchool\class.txt')
         os.remove(r'C:\Users\madi2\OneDrive\Рабочий стол\botSchool\source-page.html')
