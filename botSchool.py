@@ -7,7 +7,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 import time
 import pandas as pd
 from bs4 import BeautifulSoup
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
 def get_html_selenium(username, password):
@@ -84,22 +83,24 @@ def get_grades_selenium(username, password, class_name):
 
         time.sleep(10)
 
-        student_grades = {}
+        student_data = []
         rows = driver.find_elements(By.XPATH, "//tr[contains(@class, 'row1') or contains(@class, 'row2')]")
         for row in rows:
             student_name = row.find_element(By.CLASS_NAME, 'edubarSmartLink').text
             grades = row.find_elements(By.CLASS_NAME, 'znZnamka')
             grades_text = [grade.text for grade in grades]
-            student_grades[student_name] = grades_text
+            student_data.append([student_name, grades_text])
 
-        return student_grades
+        df = pd.DataFrame(student_data, columns=['Student Name', 'Grades'])
+
+        return df
 
 
     finally:
         driver.quit()
 
-username = 'username'
-password = 'password'
+username = 'irineaim@gmail.com'
+password = 'Idioma01@Idioma01@'
 
 get_html_selenium(username, password)
 
@@ -118,10 +119,11 @@ try:
     selected_class_name = classes[selected_class_index]
 
     if selected_class_name:
-        student_grades = get_grades_selenium(username, password, selected_class_name)
+        df = get_grades_selenium(username, password, selected_class_name)
         print(f"Оценки для {selected_class_name}:")
-        for student, grades in student_grades.items():
-            print(f"{student}: {', '.join(grades)}")
+        print(df)
+
+        df.to_csv(r'C:\Users\madi2\OneDrive\Рабочий стол\botSchool\grades.csv', index=False)
 
         os.remove(r'C:\Users\madi2\OneDrive\Рабочий стол\botSchool\class.txt')
         os.remove(r'C:\Users\madi2\OneDrive\Рабочий стол\botSchool\source-page.html')
